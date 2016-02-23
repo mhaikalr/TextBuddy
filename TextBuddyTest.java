@@ -13,8 +13,8 @@ import java.io.PrintWriter;
 
 public class TextBuddyTest {
 	
-	private static Class c;
-	private static Class[] cArgs = new Class[1];
+	private static Class tb;
+	private static Class[] tbArgs = new Class[1];
 	private static Method add;
 	private static Method delete;
 	private static Method sort;
@@ -37,24 +37,24 @@ public class TextBuddyTest {
 	@BeforeClass
 	public static void setUp() throws Exception {
 		
-		c = Class.forName("TextBuddy");
-		cArgs[0] = String.class;
-		add = c.getDeclaredMethod("addTask", cArgs);
+		tb = Class.forName("TextBuddy");
+		tbArgs[0] = String.class;
+		add = tb.getDeclaredMethod("addTask", tbArgs);
 		add.setAccessible(true);
-		delete = c.getDeclaredMethod("deleteTask", cArgs);
+		delete = tb.getDeclaredMethod("deleteTask", tbArgs);
 		delete.setAccessible(true);
-		sort = c.getDeclaredMethod("sortTasks", null);
+		sort = tb.getDeclaredMethod("sortTasks", null);
 		sort.setAccessible(true);		
-		clear = c.getDeclaredMethod("clearTasks", null);
+		clear = tb.getDeclaredMethod("clearTasks", null);
 		clear.setAccessible(true);
-		search = c.getDeclaredMethod("findMatches", cArgs);
+		search = tb.getDeclaredMethod("findMatches", tbArgs);
 		search.setAccessible(true);
-		cArgs = new Class[2];
-		cArgs[0] = int.class;
-		cArgs[1] = String.class;
-		display = c.getDeclaredMethod("formatTaskToDisplay", cArgs);
+		tbArgs = new Class[2];
+		tbArgs[0] = int.class;
+		tbArgs[1] = String.class;
+		display = tb.getDeclaredMethod("formatTaskToDisplay", tbArgs);
 		display.setAccessible(true);
-		taskList = c.getDeclaredField("_taskList");
+		taskList = tb.getDeclaredField("_taskList");
 		taskList.setAccessible(true);
 		
 		File tempFile;
@@ -339,6 +339,125 @@ public class TextBuddyTest {
 			line = (String) display.invoke(tbTest, i+1, testList.get(i));
 			assertEquals(expectedList.get(i), line);
 		}
+		
+	}
+	
+	@Test
+	public void testCommandParsing() {
+		
+		// set up possible command lines to execute and their expected values
+		// co1
+		String add = "add    abc xyz   ";
+		String args1 = "abc xyz";
+		boolean bool1 = true;
+		// co2
+		String invAdd = "add";
+		String args2 = CommandObject.EMPTY_STRING;
+		boolean bool2 = false;
+		// co3
+		String delete = "delete 1";
+		String args3 = "1";
+		boolean bool3 = true;
+		// co4
+		String invDelete1 = "delete";
+		String args4 = CommandObject.EMPTY_STRING;;
+		boolean bool4 = false;
+		// co5
+		String invDelete2 = "delete x";
+		String args5 = "x";
+		boolean bool5 = false;
+		String display = "display nothing";
+		// co6
+		String args6 = "nothing";
+		boolean bool6 = true;
+		// co7
+		String sort = "sort everything";
+		String args7 = "everything";
+		boolean bool7 = true;
+		// co8
+		String search = "search for";
+		String args8 = "for";
+		boolean bool8 = true;
+		// co9
+		String invSearch = "search";
+		String args9 = CommandObject.EMPTY_STRING;
+		boolean bool9 = false;
+		// co10
+		String clear = "clear  ";
+		String args10 = CommandObject.EMPTY_STRING;
+		boolean bool10 = true;
+		// co11
+		String invClear = "clear 2";
+		String args11 = "2";
+		boolean bool11 = false;
+		
+		// set up CommandObjects
+		CommandObject co1 = new CommandObject(add);
+		CommandObject co2 = new CommandObject(invAdd);
+		CommandObject co3 = new CommandObject(delete);
+		CommandObject co4 = new CommandObject(invDelete1);
+		CommandObject co5 = new CommandObject(invDelete2);
+		CommandObject co6 = new CommandObject(display);
+		CommandObject co7 = new CommandObject(sort);
+		CommandObject co8 = new CommandObject(search);
+		CommandObject co9 = new CommandObject(invSearch);
+		CommandObject co10 = new CommandObject(clear);
+		CommandObject co11 = new CommandObject(invClear);
+		
+		// check co1
+		assertEquals(CommandObject.COMMAND_ADD, co1.getCommandType());
+		assertEquals(args1, co1.getCommandArgs());
+		assertEquals(bool1, co1.isValid());
+		
+		// check co2
+		assertEquals(CommandObject.COMMAND_ADD, co2.getCommandType());
+		assertEquals(args2, co2.getCommandArgs());
+		assertEquals(bool2, co2.isValid());
+		
+		// check co3
+		assertEquals(CommandObject.COMMAND_DELETE, co3.getCommandType());
+		assertEquals(args3, co3.getCommandArgs());
+		assertEquals(bool3, co3.isValid());
+		
+		// check co4
+		assertEquals(CommandObject.COMMAND_DELETE, co4.getCommandType());
+		assertEquals(args4, co4.getCommandArgs());
+		assertEquals(bool4, co4.isValid());
+		
+		// check co5
+		assertEquals(CommandObject.COMMAND_DELETE, co5.getCommandType());
+		assertEquals(args5, co5.getCommandArgs());
+		assertEquals(bool5, co5.isValid());
+		
+		// check co6
+		assertEquals(CommandObject.COMMAND_DISPLAY, co6.getCommandType());
+		assertEquals(args6, co6.getCommandArgs());
+		assertEquals(bool6, co6.isValid());
+		
+		// check co7
+		assertEquals(CommandObject.COMMAND_SORT, co7.getCommandType());
+		assertEquals(args7, co7.getCommandArgs());
+		assertEquals(bool7, co7.isValid());
+		
+		// check co8
+		assertEquals(CommandObject.COMMAND_SEARCH, co8.getCommandType());
+		assertEquals(args8, co8.getCommandArgs());
+		assertEquals(bool8, co8.isValid());
+		
+		// check co9
+		assertEquals(CommandObject.COMMAND_SEARCH, co9.getCommandType());
+		assertEquals(args9, co9.getCommandArgs());
+		assertEquals(bool9, co9.isValid());
+		
+		// check co10
+		assertEquals(CommandObject.COMMAND_CLEAR, co10.getCommandType());
+		assertEquals(args10, co10.getCommandArgs());
+		assertEquals(bool10, co10.isValid());
+		
+		// check co11
+		assertEquals(CommandObject.COMMAND_CLEAR, co11.getCommandType());
+		assertEquals(args11, co11.getCommandArgs());
+		assertEquals(bool11, co11.isValid());
 		
 	}
 	
