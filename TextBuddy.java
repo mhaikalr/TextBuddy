@@ -11,7 +11,7 @@
  * 		"exit"			: exits TextBuddy.
  * 
  * Any white spaces entered before a command will render the command invalid, and the command will be ignored.
- * Excess white spaces at the start and end of any line will be ignored.
+ * Excess white spaces at the end of any line will be ignored.
  * Any command entered with the first word not matching any of the above commands will be ignored.
  * Command keywords are only recognised in lower case.
  * 
@@ -79,6 +79,8 @@ public class TextBuddy {
 	
 	public static final int PARSED_COMMAND_INDEX = 0;
 	public static final int PARSED_ARGS_INDEX = 1;
+	
+	public static final String EMPTY_STRING = "";
 
 	// attributes
 	private File _file;
@@ -109,7 +111,7 @@ public class TextBuddy {
 	}
 	
 	private void readFromFile() throws IOException {
-		String line = "";
+		String line = EMPTY_STRING;
 		fReader = new FileReader(_fileName);
 		bReader = new BufferedReader(fReader);
 		while ((line = bReader.readLine()) != null) {
@@ -147,7 +149,7 @@ public class TextBuddy {
 	private void copyToTempFile(File tempFile) throws IOException {
 		fWriter = new FileWriter(tempFile);
 		bWriter = new BufferedWriter(fWriter);
-		String line = "";
+		String line = EMPTY_STRING;
 		for (int i=0; i<_taskList.size(); i++) {
 			line = _taskList.get(i);
 			bWriter.write(line);
@@ -162,7 +164,7 @@ public class TextBuddy {
 	
 	// store matching lines with their corresponding indices
 	private ArrayList<String> findMatches(String keywords) {
-		String line = "";
+		String line = EMPTY_STRING;
 		int index = 1;
 		ArrayList<String> listOfMatches = new ArrayList<String>(); 
 		for (int i=0; i<_taskList.size(); i++) {
@@ -191,7 +193,7 @@ public class TextBuddy {
 			showToUser(String.format(MESSAGE_EMPTY, _fileName));
 			return;
 		}
-		String line = "";
+		String line = EMPTY_STRING;
 		int index = 1;
 		for (int i=0; i<_taskList.size(); i++) {
 			line = formatTaskToDisplay(index, _taskList.get(i));
